@@ -1,0 +1,45 @@
+/* Custom Keycloak styles for duma theme */
+
+body {
+    background-color: #f3f4f6; /* light gray tailwind */
+}
+
+/* Form card styling */
+.login-pf body {
+    background-color: #ffffff;
+}
+
+#kc-content-wrapper {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+#kc-header {
+    margin-bottom: 24px;
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: #FDA91E !important;
+    border-color: #FDA91E !important;
+    border-radius: 8px !important;
+    font-weight: bold !important;
+    padding: 12px 24px !important;
+    color: #ffffff !important;
+}
+
+.btn-primary:hover {
+    background-color: #e5981a !important;
+}
+
+/* Links */
+a {
+    color: #FDA91E;
+}
+
+a:hover {
+    color: #e5981a;
+}
