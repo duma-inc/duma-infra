@@ -22,6 +22,21 @@ body,
     font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
+html,
+body,
+.login-pf-page,
+.login-pf body,
+#kc-content,
+#kc-content-wrapper {
+    background-color: var(--duma-bg) !important;
+}
+
+.login-pf-page {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh;
+}
+
 #kc-header,
 #kc-locale,
 #kc-info,
@@ -50,7 +65,7 @@ body,
     max-width: 100%;
     min-height: 100vh;
     margin: 0;
-    padding: 32px 20px;
+    padding: 0;
     overflow-x: hidden;
     background: var(--duma-bg);
     box-shadow: none;
@@ -88,7 +103,7 @@ body,
     box-sizing: border-box;
     width: 100%;
     max-width: 420px;
-    padding: 0;
+    padding: 32px 20px;
 }
 
 .duma-login-form {
@@ -232,23 +247,18 @@ body,
 }
 
 @media (max-width: 980px) {
-    #kc-content-wrapper {
-        padding: 24px 16px;
-    }
-
     .duma-login-shell {
-        min-height: calc(100vh - 48px);
+        min-height: 100vh;
     }
 }
 
 @media (max-width: 640px) {
-    #kc-content-wrapper {
-        min-height: 100vh;
-        padding: 20px 16px;
-    }
-
     .duma-brand-inner {
         margin-bottom: 24px;
+    }
+
+    .duma-form-card {
+        padding: 24px 16px;
     }
 
     .duma-form-meta {
