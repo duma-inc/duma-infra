@@ -70,10 +70,31 @@ services:
   #   ports:
   #     - "3001:3001"
 
-  # adm:
-  #   build: ../duma-frontend-adm
-  #   ports:
-  #     - "3002:3002"
+  adm:
+    build:
+      context: ../duma-adm
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8080}
+        - NEXT_PUBLIC_KEYCLOAK_ISSUER=${NEXT_PUBLIC_KEYCLOAK_ISSUER:-http://localhost:8081/realms/duma-realm}
+        - NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-duma-adm}
+        - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3002}
+    ports:
+      - "${ADM_PORT:-3002}:3002"
+    environment:
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3002}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-minhasenhasupersecreta123}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-duma-adm}
+      - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET:-14KouZxVwvRcOTLe1vvw6HOiORdw0fLw}
+      - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER:-http://localhost:8081/realms/duma-realm}
+      - KEYCLOAK_ISSUER_INTERNAL=${KEYCLOAK_ISSUER_INTERNAL:-http://keycloak:8080/realms/duma-realm}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8080}
+      - NEXT_PUBLIC_KEYCLOAK_ISSUER=${NEXT_PUBLIC_KEYCLOAK_ISSUER:-http://localhost:8081/realms/duma-realm}
+      - NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-duma-adm}
+    depends_on:
+      - api
+      - keycloak
+    restart: unless-stopped
+
 
   db:
     image: postgres:16
@@ -149,8 +170,8 @@ services:
       - ./nginx/ssl:/etc/nginx/ssl:ro
     depends_on:
       - api
+      - adm
       #   - ava
-      #   - adm
     restart: unless-stopped
   keycloak:
     image: quay.io/keycloak/keycloak:26.5.5
