@@ -4,15 +4,11 @@
         <span class="duma-hidden-title">Duma</span>
     <#elseif section = "form">
         <div class="duma-login-shell">
-            <aside class="duma-brand-panel">
-                <div class="duma-brand-inner">
-                    <img src="${url.resourcesPath}/img/logoDuma.png" alt="Logo Duma" class="duma-logo" />
-                </div>
-            </aside>
-
             <section class="duma-form-panel">
                 <div class="duma-form-card">
-
+                    <div class="duma-brand-inner">
+                        <img src="${url.resourcesPath}/img/logoDuma.png" alt="Logo Duma" class="duma-logo" />
+                    </div>
                     <#if message?has_content>
                         <div class="duma-alert duma-alert-${message.type}">
                             ${kcSanitize(message.summary)?no_esc}
@@ -82,7 +78,6 @@
                         <input type="hidden" id="id-hidden-input" name="credentialId" <#if auth.selectedCredential?has_content>value="${auth.selectedCredential}"</#if> />
 
                         <button tabindex="4" class="duma-submit" name="login" id="kc-login" type="submit">
-                            <span class="duma-submit-icon" aria-hidden="true">•</span>
                             <span>${msg("doLogIn")}</span>
                         </button>
                     </form>

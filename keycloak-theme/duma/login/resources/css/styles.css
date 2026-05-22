@@ -15,9 +15,9 @@ body,
 .login-pf body {
     margin: 0;
     min-height: 100%;
-    background:
-        radial-gradient(circle at top left, rgba(255, 163, 51, 0.08), transparent 30%),
-        linear-gradient(135deg, #151515 0%, #1c1c1c 45%, #181818 100%);
+    width: 100%;
+    overflow-x: hidden;
+    background: var(--duma-bg);
     color: var(--duma-text);
     font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
@@ -41,103 +41,54 @@ body,
 
 #kc-content {
     padding: 0;
+    width: 100%;
 }
 
 #kc-content-wrapper {
     box-sizing: border-box;
-    width: min(1180px, calc(100vw - 48px));
-    min-height: calc(100vh - 48px);
-    margin: 24px auto;
-    padding: 0;
-    border: 1px solid var(--duma-border);
-    border-radius: 32px;
-    overflow: hidden;
-    background: rgba(18, 18, 18, 0.92);
-    box-shadow: var(--duma-shadow);
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 32px 20px;
+    overflow-x: hidden;
+    background: var(--duma-bg);
+    box-shadow: none;
 }
 
 .duma-login-shell {
-    display: grid;
-    grid-template-columns: minmax(320px, 1.05fr) minmax(360px, 0.95fr);
-    min-height: calc(100vh - 48px);
-}
-
-.duma-brand-panel {
-    position: relative;
     display: flex;
+    min-height: calc(100vh - 64px);
     align-items: center;
     justify-content: center;
-    padding: 56px 48px;
-    background:
-        radial-gradient(circle at 20% 20%, rgba(255, 163, 51, 0.14), transparent 28%),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0)),
-        #171717;
-}
-
-.duma-brand-panel::after {
-    content: "";
-    position: absolute;
-    top: 10%;
-    right: 0;
-    width: 1px;
-    height: 80%;
-    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.08), transparent);
+    width: 100%;
 }
 
 .duma-brand-inner {
     display: grid;
     justify-items: center;
-    gap: 42px;
-    max-width: 480px;
+    gap: 0;
+    margin-bottom: 28px;
     text-align: center;
 }
 
 .duma-logo {
-    width: min(72%, 420px);
+    width: min(260px, 70vw);
     height: auto;
-    filter: drop-shadow(0 0 24px rgba(255, 163, 51, 0.12));
-}
-
-.duma-brand-copy {
-    margin: 0;
-    max-width: 420px;
-    font-size: 1.05rem;
-    line-height: 1.65;
-    color: var(--duma-muted);
 }
 
 .duma-form-panel {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 56px 48px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+    width: 100%;
 }
 
 .duma-form-card {
-    width: min(100%, 460px);
-}
-
-.duma-form-copy {
-    margin-bottom: 34px;
-    padding-bottom: 28px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.duma-form-copy h1 {
-    margin: 0 0 12px;
-    font-size: clamp(2rem, 3vw, 3rem);
-    line-height: 1.04;
-    letter-spacing: -0.04em;
-    color: #fffaf2;
-}
-
-.duma-form-copy p {
-    margin: 0;
-    max-width: 360px;
-    font-size: 1.02rem;
-    line-height: 1.65;
-    color: var(--duma-muted);
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 420px;
+    padding: 0;
 }
 
 .duma-login-form {
@@ -218,37 +169,24 @@ body,
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
     width: 100%;
     height: 60px;
     margin-top: 8px;
     border: 0;
     border-radius: 14px;
-    background: linear-gradient(180deg, #ffb13d 0%, var(--duma-accent) 100%);
+    background: var(--duma-accent);
     color: #ffffff;
     font-size: 1.35rem;
     font-weight: 700;
     letter-spacing: -0.02em;
     cursor: pointer;
-    box-shadow: 0 14px 30px rgba(255, 163, 51, 0.22);
-    transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+    transition: transform 180ms ease, filter 180ms ease;
 }
 
 .duma-submit:hover,
 .duma-submit:focus {
     transform: translateY(-1px);
-    box-shadow: 0 18px 34px rgba(255, 163, 51, 0.26);
     filter: brightness(1.02);
-}
-
-.duma-submit-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    font-size: 1.5rem;
-    line-height: 1;
 }
 
 .duma-legal {
@@ -295,69 +233,22 @@ body,
 
 @media (max-width: 980px) {
     #kc-content-wrapper {
-        width: min(100vw - 24px, 760px);
-        min-height: auto;
-        margin: 12px auto;
-        border-radius: 26px;
+        padding: 24px 16px;
     }
 
     .duma-login-shell {
-        grid-template-columns: 1fr;
-        min-height: auto;
-    }
-
-    .duma-brand-panel {
-        min-height: 300px;
-        padding: 44px 24px 32px;
-    }
-
-    .duma-brand-panel::after {
-        top: auto;
-        bottom: 0;
-        left: 10%;
-        width: 80%;
-        height: 1px;
-        background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.08), transparent);
-    }
-
-    .duma-form-panel {
-        padding: 36px 24px 44px;
-    }
-
-    .duma-logo {
-        width: min(76%, 320px);
+        min-height: calc(100vh - 48px);
     }
 }
 
 @media (max-width: 640px) {
     #kc-content-wrapper {
-        width: 100vw;
         min-height: 100vh;
-        margin: 0;
-        border: 0;
-        border-radius: 0;
-    }
-
-    .duma-brand-panel {
-        min-height: 220px;
-        padding: 36px 20px 28px;
+        padding: 20px 16px;
     }
 
     .duma-brand-inner {
-        gap: 28px;
-    }
-
-    .duma-form-panel {
-        padding: 28px 20px 36px;
-    }
-
-    .duma-form-copy {
-        margin-bottom: 26px;
-        padding-bottom: 22px;
-    }
-
-    .duma-form-copy h1 {
-        font-size: 2rem;
+        margin-bottom: 24px;
     }
 
     .duma-form-meta {
