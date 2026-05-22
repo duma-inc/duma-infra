@@ -1,45 +1,367 @@
-/* Custom Keycloak styles for duma theme */
-
-body {
-    background-color: #f3f4f6; /* light gray tailwind */
+:root {
+    --duma-accent: #ffa333;
+    --duma-accent-strong: #ffb84d;
+    --duma-bg: #1c1c1c;
+    --duma-panel: #202020;
+    --duma-panel-soft: #262626;
+    --duma-border: rgba(255, 255, 255, 0.08);
+    --duma-text: #f8f7f4;
+    --duma-muted: #8f9197;
+    --duma-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
 }
 
-/* Form card styling */
+html,
+body,
 .login-pf body {
-    background-color: #ffffff;
+    margin: 0;
+    min-height: 100%;
+    background:
+        radial-gradient(circle at top left, rgba(255, 163, 51, 0.08), transparent 30%),
+        linear-gradient(135deg, #151515 0%, #1c1c1c 45%, #181818 100%);
+    color: var(--duma-text);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+#kc-header,
+#kc-locale,
+#kc-info,
+#kc-registration,
+#kc-social-providers {
+    display: none;
+}
+
+#kc-header-wrapper {
+    margin: 0;
+    padding: 0;
+}
+
+.duma-hidden-title {
+    display: none;
+}
+
+#kc-content {
+    padding: 0;
 }
 
 #kc-content-wrapper {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    border: none;
+    box-sizing: border-box;
+    width: min(1180px, calc(100vw - 48px));
+    min-height: calc(100vh - 48px);
+    margin: 24px auto;
+    padding: 0;
+    border: 1px solid var(--duma-border);
+    border-radius: 32px;
+    overflow: hidden;
+    background: rgba(18, 18, 18, 0.92);
+    box-shadow: var(--duma-shadow);
 }
 
-#kc-header {
-    margin-bottom: 24px;
+.duma-login-shell {
+    display: grid;
+    grid-template-columns: minmax(320px, 1.05fr) minmax(360px, 0.95fr);
+    min-height: calc(100vh - 48px);
 }
 
-/* Button styling */
-.btn-primary {
-    background-color: #FDA91E !important;
-    border-color: #FDA91E !important;
-    border-radius: 8px !important;
-    font-weight: bold !important;
-    padding: 12px 24px !important;
-    color: #ffffff !important;
+.duma-brand-panel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 56px 48px;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(255, 163, 51, 0.14), transparent 28%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0)),
+        #171717;
 }
 
-.btn-primary:hover {
-    background-color: #e5981a !important;
+.duma-brand-panel::after {
+    content: "";
+    position: absolute;
+    top: 10%;
+    right: 0;
+    width: 1px;
+    height: 80%;
+    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.08), transparent);
 }
 
-/* Links */
-a {
-    color: #FDA91E;
+.duma-brand-inner {
+    display: grid;
+    justify-items: center;
+    gap: 42px;
+    max-width: 480px;
+    text-align: center;
 }
 
-a:hover {
-    color: #e5981a;
+.duma-logo {
+    width: min(72%, 420px);
+    height: auto;
+    filter: drop-shadow(0 0 24px rgba(255, 163, 51, 0.12));
+}
+
+.duma-brand-copy {
+    margin: 0;
+    max-width: 420px;
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: var(--duma-muted);
+}
+
+.duma-form-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 56px 48px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+}
+
+.duma-form-card {
+    width: min(100%, 460px);
+}
+
+.duma-form-copy {
+    margin-bottom: 34px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.duma-form-copy h1 {
+    margin: 0 0 12px;
+    font-size: clamp(2rem, 3vw, 3rem);
+    line-height: 1.04;
+    letter-spacing: -0.04em;
+    color: #fffaf2;
+}
+
+.duma-form-copy p {
+    margin: 0;
+    max-width: 360px;
+    font-size: 1.02rem;
+    line-height: 1.65;
+    color: var(--duma-muted);
+}
+
+.duma-login-form {
+    display: grid;
+    gap: 18px;
+}
+
+.duma-field {
+    display: grid;
+    gap: 8px;
+}
+
+.duma-field label {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.duma-input {
+    box-sizing: border-box;
+    width: 100%;
+    height: 54px;
+    padding: 0 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    background: var(--duma-panel-soft);
+    color: #fff;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.duma-input::placeholder {
+    color: rgba(143, 145, 151, 0.9);
+}
+
+.duma-input:focus {
+    border-color: rgba(255, 163, 51, 0.55);
+    box-shadow: 0 0 0 4px rgba(255, 163, 51, 0.12);
+    transform: translateY(-1px);
+}
+
+.duma-form-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: -2px;
+}
+
+.duma-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.92rem;
+    color: var(--duma-muted);
+}
+
+.duma-check input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--duma-accent);
+}
+
+.duma-link {
+    color: var(--duma-accent);
+    text-decoration: none;
+    transition: color 180ms ease, opacity 180ms ease;
+}
+
+.duma-link:hover,
+.duma-link:focus {
+    color: var(--duma-accent-strong);
+    opacity: 1;
+}
+
+.duma-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    height: 60px;
+    margin-top: 8px;
+    border: 0;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #ffb13d 0%, var(--duma-accent) 100%);
+    color: #ffffff;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+    box-shadow: 0 14px 30px rgba(255, 163, 51, 0.22);
+    transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+.duma-submit:hover,
+.duma-submit:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 18px 34px rgba(255, 163, 51, 0.26);
+    filter: brightness(1.02);
+}
+
+.duma-submit-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.duma-legal {
+    margin: 34px auto 0;
+    max-width: 380px;
+    text-align: center;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: rgba(143, 145, 151, 0.6);
+}
+
+.duma-alert {
+    margin-bottom: 18px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid transparent;
+    font-size: 0.94rem;
+    line-height: 1.5;
+}
+
+.duma-alert-error {
+    color: #ffd6d0;
+    background: rgba(196, 48, 43, 0.16);
+    border-color: rgba(255, 116, 108, 0.22);
+}
+
+.duma-alert-success {
+    color: #d7ffe4;
+    background: rgba(31, 130, 74, 0.16);
+    border-color: rgba(73, 198, 122, 0.2);
+}
+
+.duma-alert-warning {
+    color: #ffe7b8;
+    background: rgba(255, 163, 51, 0.12);
+    border-color: rgba(255, 163, 51, 0.22);
+}
+
+.duma-alert-info {
+    color: #d8e6ff;
+    background: rgba(65, 120, 255, 0.14);
+    border-color: rgba(65, 120, 255, 0.22);
+}
+
+@media (max-width: 980px) {
+    #kc-content-wrapper {
+        width: min(100vw - 24px, 760px);
+        min-height: auto;
+        margin: 12px auto;
+        border-radius: 26px;
+    }
+
+    .duma-login-shell {
+        grid-template-columns: 1fr;
+        min-height: auto;
+    }
+
+    .duma-brand-panel {
+        min-height: 300px;
+        padding: 44px 24px 32px;
+    }
+
+    .duma-brand-panel::after {
+        top: auto;
+        bottom: 0;
+        left: 10%;
+        width: 80%;
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.08), transparent);
+    }
+
+    .duma-form-panel {
+        padding: 36px 24px 44px;
+    }
+
+    .duma-logo {
+        width: min(76%, 320px);
+    }
+}
+
+@media (max-width: 640px) {
+    #kc-content-wrapper {
+        width: 100vw;
+        min-height: 100vh;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+    }
+
+    .duma-brand-panel {
+        min-height: 220px;
+        padding: 36px 20px 28px;
+    }
+
+    .duma-brand-inner {
+        gap: 28px;
+    }
+
+    .duma-form-panel {
+        padding: 28px 20px 36px;
+    }
+
+    .duma-form-copy {
+        margin-bottom: 26px;
+        padding-bottom: 22px;
+    }
+
+    .duma-form-copy h1 {
+        font-size: 2rem;
+    }
+
+    .duma-form-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
