@@ -1,0 +1,5 @@
+# Variáveis de ambiente (contém segredos — use .env.example como referência)
+.env
+
+# Backups e snapshots locais do banco de dados
+*.sql

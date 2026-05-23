@@ -4,7 +4,6 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/duma_db
       SPRING_DATASOURCE_USERNAME: duma
       SPRING_DATASOURCE_PASSWORD: 163duma
@@ -20,6 +19,12 @@ services:
       SPRING_MONGODB_URI: mongodb://duma:163duma@mongodb:27017/duma_db?authSource=admin
       SPRING_DATA_MONGODB_URI: mongodb://duma:163duma@mongodb:27017/duma_db?authSource=admin
       DUMA_ENGINE_BASE_URL: http://engine:3333
+      DUMA_JWT_ISSUER_URI: https://auth.dumaway.com/realms/duma-realm
+      DUMA_JWT_JWK_SET_URI: https://auth.dumaway.com/realms/duma-realm/protocol/openid-connect/certs
+      KEYCLOAK_SERVER_URL: http://keycloak:8080
+      KEYCLOAK_REALM: duma-realm
+      KEYCLOAK_ADMIN_USERNAME: duma
+      KEYCLOAK_ADMIN_PASSWORD: 163duma
     depends_on:
       db:
         condition: service_healthy
@@ -74,21 +79,21 @@ services:
     build:
       context: ../duma-adm
       args:
-        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8080}
-        - NEXT_PUBLIC_KEYCLOAK_ISSUER=${NEXT_PUBLIC_KEYCLOAK_ISSUER:-http://localhost:8081/realms/duma-realm}
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-https://adm.dumaway.com/api}
+        - NEXT_PUBLIC_KEYCLOAK_ISSUER=${NEXT_PUBLIC_KEYCLOAK_ISSUER:-https://auth.dumaway.com/realms/duma-realm}
         - NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-duma-adm}
-        - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3002}
+        - NEXTAUTH_URL=${NEXTAUTH_URL:-https://adm.dumaway.com}
     ports:
-      - "${ADM_PORT:-3002}:3002"
+      - "${ADM_PORT:-3012}:3002"
     environment:
-      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3002}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-https://adm.dumaway.com}
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-minhasenhasupersecreta123}
       - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-duma-adm}
       - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET:-14KouZxVwvRcOTLe1vvw6HOiORdw0fLw}
-      - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER:-http://localhost:8081/realms/duma-realm}
+      - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER:-https://auth.dumaway.com/realms/duma-realm}
       - KEYCLOAK_ISSUER_INTERNAL=${KEYCLOAK_ISSUER_INTERNAL:-http://keycloak:8080/realms/duma-realm}
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8080}
-      - NEXT_PUBLIC_KEYCLOAK_ISSUER=${NEXT_PUBLIC_KEYCLOAK_ISSUER:-http://localhost:8081/realms/duma-realm}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-https://adm.dumaway.com/api}
+      - NEXT_PUBLIC_KEYCLOAK_ISSUER=${NEXT_PUBLIC_KEYCLOAK_ISSUER:-https://auth.dumaway.com/realms/duma-realm}
       - NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-duma-adm}
     depends_on:
       - api
@@ -179,6 +184,10 @@ services:
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: duma
       KC_BOOTSTRAP_ADMIN_PASSWORD: 163duma
+      KC_HOSTNAME: https://auth.dumaway.com
+      KC_HOSTNAME_STRICT: "false"
+      KC_PROXY_HEADERS: xforwarded
+      KC_HTTP_ENABLED: "true"
     ports:
       - "8081:8080"
     volumes:
