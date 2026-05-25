@@ -19,12 +19,14 @@ services:
       SPRING_MONGODB_URI: mongodb://duma:163duma@mongodb:27017/duma_db?authSource=admin
       SPRING_DATA_MONGODB_URI: mongodb://duma:163duma@mongodb:27017/duma_db?authSource=admin
       DUMA_ENGINE_BASE_URL: http://engine:3333
-      DUMA_JWT_ISSUER_URI: https://auth.dumaway.com/realms/duma-realm
-      DUMA_JWT_JWK_SET_URI: https://auth.dumaway.com/realms/duma-realm/protocol/openid-connect/certs
+      DUMA_JWT_ISSUER_URI: http://${HOST_IP}:8081/realms/duma-realm
+      DUMA_JWT_JWK_SET_URI: http://keycloak:8080/realms/duma-realm/protocol/openid-connect/certs
+      SPRING_PROFILES_ACTIVE: docker
       KEYCLOAK_SERVER_URL: http://keycloak:8080
       KEYCLOAK_REALM: duma-realm
       KEYCLOAK_ADMIN_USERNAME: duma
       KEYCLOAK_ADMIN_PASSWORD: 163duma
+      SERVER_TOMCAT_MAX_HTTP_HEADER_SIZE: 65536
     depends_on:
       db:
         condition: service_healthy
@@ -180,18 +182,20 @@ services:
     restart: unless-stopped
   keycloak:
     image: quay.io/keycloak/keycloak:26.5.5
-    command: start-dev
+    command: start-dev --import-realm
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: duma
       KC_BOOTSTRAP_ADMIN_PASSWORD: 163duma
-      KC_HOSTNAME: https://auth.dumaway.com
+      KC_HOSTNAME: http://${HOST_IP}:8081
       KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
       KC_PROXY_HEADERS: xforwarded
       KC_HTTP_ENABLED: "true"
     ports:
       - "8081:8080"
     volumes:
       - ./keycloak-theme/duma:/opt/keycloak/themes/duma
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
       - keycloak_data:/opt/keycloak/data
     restart: unless-stopped
 

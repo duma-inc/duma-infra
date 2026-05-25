@@ -4,7 +4,7 @@
   "displayName": "Duma",
   "enabled": true,
   "registrationAllowed": false,
-  "registrationEmailAsUsername": true,
+  "registrationEmailAsUsername": false,
   "rememberMe": true,
   "verifyEmail": false,
   "loginWithEmailAllowed": true,
@@ -68,10 +68,14 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "14KouZxVwvRcOTLe1vvw6HOiORdw0fLw",
       "redirectUris": [
-        "http://localhost:3002/*"
+        "http://localhost:3002/*",
+        "http://localhost:3012/*",
+        "https://adm.dumaway.com/*"
       ],
       "webOrigins": [
         "http://localhost:3002",
+        "http://localhost:3012",
+        "https://adm.dumaway.com",
         "+"
       ],
       "notBefore": 0,
