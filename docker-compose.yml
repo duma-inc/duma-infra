@@ -208,9 +208,8 @@ services:
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: duma
       KC_BOOTSTRAP_ADMIN_PASSWORD: 163duma
-      KC_HOSTNAME: http://${HOST_IP}:8081
+      KC_HOSTNAME: https://auth.dumaway.com
       KC_HOSTNAME_STRICT: "false"
-      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
       KC_PROXY_HEADERS: xforwarded
       KC_HTTP_ENABLED: "true"
     ports:
