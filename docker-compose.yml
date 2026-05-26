@@ -72,10 +72,32 @@ services:
     depends_on:
       db:
         condition: service_healthy
-  # ava:
-  #   build: ../duma-frontend-ava
-  #   ports:
-  #     - "3001:3001"
+  ava:
+    build:
+      context: ../duma-ava
+      args:
+        - NEXT_PUBLIC_API_URL=${AVA_NEXT_PUBLIC_API_URL:-https://ava.dumaway.com/api}
+        - NEXT_PUBLIC_KEYCLOAK_ISSUER=${NEXT_PUBLIC_KEYCLOAK_ISSUER:-https://auth.dumaway.com/realms/duma-realm}
+        - NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=${AVA_KEYCLOAK_CLIENT_ID:-duma-web}
+        - NEXTAUTH_URL=${AVA_NEXTAUTH_URL:-https://ava.dumaway.com}
+    ports:
+      - "${AVA_PORT:-3001}:3000"
+    environment:
+      - NEXTAUTH_URL=${AVA_NEXTAUTH_URL:-https://ava.dumaway.com}
+      - AUTH_URL=${AVA_NEXTAUTH_URL:-https://ava.dumaway.com}
+      - NEXTAUTH_SECRET=${AVA_NEXTAUTH_SECRET:-minhasenhasupersecreta123}
+      - AUTH_SECRET=${AVA_NEXTAUTH_SECRET:-minhasenhasupersecreta123}
+      - KEYCLOAK_CLIENT_ID=${AVA_KEYCLOAK_CLIENT_ID:-duma-web}
+      - KEYCLOAK_CLIENT_SECRET=${AVA_KEYCLOAK_CLIENT_SECRET:-G4Ly9ch6G40MOIjpbrjbmENPnfb7HgsA}
+      - KEYCLOAK_ISSUER=${AVA_KEYCLOAK_ISSUER:-https://auth.dumaway.com/realms/duma-realm}
+      - KEYCLOAK_ISSUER_INTERNAL=${KEYCLOAK_ISSUER_INTERNAL:-http://keycloak:8080/realms/duma-realm}
+      - NEXT_PUBLIC_API_URL=${AVA_NEXT_PUBLIC_API_URL:-https://ava.dumaway.com/api}
+      - NEXT_PUBLIC_KEYCLOAK_ISSUER=${NEXT_PUBLIC_KEYCLOAK_ISSUER:-https://auth.dumaway.com/realms/duma-realm}
+      - NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=${AVA_KEYCLOAK_CLIENT_ID:-duma-web}
+    depends_on:
+      - api
+      - keycloak
+    restart: unless-stopped
 
   adm:
     build:
