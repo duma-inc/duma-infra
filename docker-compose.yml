@@ -119,6 +119,7 @@ services:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-https://adm.dumaway.com/api}
       - NEXT_PUBLIC_KEYCLOAK_ISSUER=${NEXT_PUBLIC_KEYCLOAK_ISSUER:-https://auth.dumaway.com/realms/duma-realm}
       - NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-duma-adm}
+      - API_INTERNAL_URL=http://api:8080
     depends_on:
       - api
       - keycloak
