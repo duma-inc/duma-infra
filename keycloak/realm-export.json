@@ -19,12 +19,27 @@
   "offlineSessionIdleTimeout": 2592000,
   "offlineSessionMaxLifespanEnabled": false,
   "loginTheme": "duma",
-  "defaultRoles": [
-    "offline_access",
-    "uma_authorization"
-  ],
   "roles": {
     "realm": [
+      {
+        "name": "default-roles-duma-realm",
+        "description": "${role_default-roles}",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "offline_access",
+            "uma_authorization"
+          ],
+          "client": {
+            "account": [
+              "manage-account",
+              "view-profile"
+            ]
+          }
+        },
+        "clientRole": false,
+        "containerId": "duma-realm"
+      },
       {
         "name": "offline_access",
         "description": "${role_offline-access}",
@@ -98,17 +113,76 @@
       "fullScopeAllowed": true,
       "defaultClientScopes": [
         "basic",
-        "web-origins",
-        "acr",
         "roles",
         "profile",
         "email"
       ],
       "optionalClientScopes": [
-        "address",
-        "phone",
-        "offline_access",
-        "microprofile-jwt"
+        "offline_access"
+      ],
+      "protocolMappers": [
+        {
+          "name": "realm roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "access.token.claim": "true",
+            "claim.name": "realm_access.roles",
+            "id.token.claim": "true",
+            "jsonType.label": "String",
+            "multivalued": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "duma-web",
+      "name": "Duma AVA",
+      "description": "Cliente OIDC do aplicativo do aluno (AVA)",
+      "rootUrl": "http://localhost:3001",
+      "baseUrl": "http://localhost:3001",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "G4Ly9ch6G40MOIjpbrjbmENPnfb7HgsA",
+      "redirectUris": [
+        "http://localhost:3001/*",
+        "https://ava.dumaway.com/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3001",
+        "https://ava.dumaway.com",
+        "+"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "post.logout.redirect.uris": "http://localhost:3001/*",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "backchannel.logout.session.required": "true",
+        "backchannel.logout.revoke.offline.tokens": "false",
+        "use.refresh.tokens": "true"
+      },
+      "fullScopeAllowed": true,
+      "defaultClientScopes": [
+        "basic",
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "offline_access"
       ],
       "protocolMappers": [
         {
@@ -296,8 +370,16 @@
         }
       ],
       "realmRoles": [
+        "default-roles-duma-realm",
         "collaborator"
       ]
     }
-  ]
+  ],
+  "defaultRole": {
+    "name": "default-roles-duma-realm",
+    "description": "${role_default-roles}",
+    "composite": true,
+    "clientRole": false,
+    "containerId": "duma-realm"
+  }
 }
