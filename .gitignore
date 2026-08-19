@@ -3,3 +3,7 @@
 
 # Backups e snapshots locais do banco de dados
 *.sql
+backups/
+
+# Backups gerados por update_host_ip.sh (contêm segredos)
+.env.bak-*
