@@ -200,6 +200,72 @@
           }
         }
       ]
+    },
+    {
+      "clientId": "duma-mobile",
+      "name": "DUMA Mobile (Expo)",
+      "description": "App do aluno em React Native/Expo. Cliente publico com PKCE.",
+      "rootUrl": "http://localhost:3001",
+      "baseUrl": "http://localhost:3001",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "redirectUris": [
+        "dumamobile://*",
+        "exp://192.168.1.6:8082/--/*",
+        "exp://192.168.1.6:8081/--/*",
+        "exp://localhost:8082/--/*",
+        "exp://localhost:8081/--/*",
+        "http://localhost:19006/*"
+      ],
+      "webOrigins": [
+        "*"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": true,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "post.logout.redirect.uris": "dumamobile://*##exp://192.168.1.6:8082/--/*##exp://192.168.1.6:8081/--/*##exp://localhost:8082/--/*##exp://localhost:8081/--/*##http://localhost:19006/*",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "backchannel.logout.session.required": "true",
+        "backchannel.logout.revoke.offline.tokens": "false",
+        "use.refresh.tokens": "true",
+        "pkce.code.challenge.method": "S256"
+      },
+      "fullScopeAllowed": true,
+      "defaultClientScopes": [
+        "basic",
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "offline_access"
+      ],
+      "protocolMappers": [
+        {
+          "name": "realm roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "access.token.claim": "true",
+            "claim.name": "realm_access.roles",
+            "id.token.claim": "true",
+            "jsonType.label": "String",
+            "multivalued": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
     }
   ],
   "clientScopes": [
