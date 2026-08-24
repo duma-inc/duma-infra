@@ -109,6 +109,30 @@ services:
       - keycloak
     restart: unless-stopped
 
+  toolkit:
+    build:
+      context: ../duma-toolkit
+      args:
+        # NEXT_PUBLIC_* e inlined no bundle: precisa vir como build-arg, nao so no environment.
+        - NEXT_PUBLIC_API_URL=${TOOLKIT_NEXT_PUBLIC_API_URL:-http://${HOST_IP}:8080}
+    ports:
+      - "${TOOLKIT_PORT:-3003}:3003"
+    environment:
+      # Tudo aqui usa HOST_IP, nao localhost: o mesmo hostname precisa resolver do navegador
+      # do professor E de dentro do container (que faz a descoberta OIDC e troca o token).
+      # Com `localhost` o container tentava falar consigo mesmo e o login morria no signin.
+      - NEXTAUTH_URL=${TOOLKIT_NEXTAUTH_URL:-http://${HOST_IP}:${TOOLKIT_PORT:-3003}}
+      - NEXTAUTH_SECRET=${TOOLKIT_NEXTAUTH_SECRET:-minhasenhasupersecreta123}
+      - COOKIE_PREFIX=${TOOLKIT_COOKIE_PREFIX:-duma-toolkit}
+      - KEYCLOAK_CLIENT_ID=${TOOLKIT_KEYCLOAK_CLIENT_ID:-duma-toolkit}
+      - KEYCLOAK_CLIENT_SECRET=${TOOLKIT_KEYCLOAK_CLIENT_SECRET:?defina TOOLKIT_KEYCLOAK_CLIENT_SECRET no .env}
+      - KEYCLOAK_ISSUER=${TOOLKIT_KEYCLOAK_ISSUER:-http://${HOST_IP}:8081/realms/duma-realm}
+      - NEXT_PUBLIC_API_URL=${TOOLKIT_NEXT_PUBLIC_API_URL:-http://${HOST_IP}:8080}
+    depends_on:
+      - api
+      - keycloak
+    restart: unless-stopped
+
   adm:
     build:
       context: ../duma-adm
