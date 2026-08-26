@@ -1,0 +1,202 @@
+# Backup diario dos bancos de producao (namespace duma).
+#
+# Antes disto nao havia backup nenhum: os dados vivem em PVCs `local-path`, ou seja,
+# diretorios no disco do proprio VPS, com reclaimPolicy: Delete. A unica rede de
+# seguranca era o snapshot semanal da VM feito pela Hostinger (2 retidos), que nao
+# cobre o caso comum -- "um bug apagou dados na terca-feira".
+#
+# Sao dois CronJobs separados (e nao um Job com dois containers) para que a falha de
+# um banco nao impeca o backup do outro, e para que `kubectl -n duma get cronjob`
+# mostre o estado de cada um isoladamente.
+#
+# Aplicar:  kubectl -n duma apply -f k8s/backup.yml
+# Restore:  ver k8s/README.md
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: duma-backups
+  namespace: duma
+  labels:
+    app: duma-backup
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      # Os dumps comprimidos somam ~2 MB/dia; 14 dias cabem em ~30 MB. 2Gi da folga
+      # de sobra para o banco crescer uma ordem de grandeza sem mexer aqui.
+      storage: 2Gi
+  # storageClassName omitido de proposito: usa a default (local-path). O binding e
+  # WaitForFirstConsumer, entao o PVC fica Pending ate o primeiro Job rodar.
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: duma-backup-postgres
+  namespace: duma
+  labels:
+    app: duma-backup
+    component: postgres
+spec:
+  schedule: "0 3 * * *"
+  # O no roda em UTC; sem isto o backup cairia as 00h de Brasilia.
+  timeZone: America/Sao_Paulo
+  # Nunca sobrepor execucoes: um dump lento nao deve concorrer com o proximo.
+  concurrencyPolicy: Forbid
+  # Se o cluster estiver fora do ar no horario, ainda vale rodar ate 1h depois.
+  startingDeadlineSeconds: 3600
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      # Mantem o Job (e seus logs) por 48h apos terminar, para diagnostico.
+      ttlSecondsAfterFinished: 172800
+      template:
+        metadata:
+          labels:
+            app: duma-backup
+            component: postgres
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: pgdump
+              # Mesma major do servidor: um pg_dump mais novo que o servidor e o que quebra.
+              image: postgres:16
+              env:
+                - name: PGHOST
+                  value: duma-db
+                - name: PGPORT
+                  value: "5432"
+                - name: PGUSER
+                  value: duma
+                - name: PGDATABASE
+                  value: duma_db
+                - name: RETENTION_DAYS
+                  value: "14"
+                # Via env (e nao via --password=) para a senha nao aparecer em `kubectl describe`.
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: duma-infra-secrets
+                      key: POSTGRES_PASSWORD
+              command: ["/bin/bash", "-c"]
+              args:
+                - |
+                  set -euo pipefail
+                  DIR=/backups/postgres; mkdir -p "$DIR"
+
+                  # Restos de execucoes interrompidas. O prefixo ponto garante que um dump
+                  # parcial nunca casa com o glob de backup valido nem com o da retencao.
+                  find "$DIR" -maxdepth 1 -name '.duma_db-*' -mtime +1 -delete
+
+                  TS=$(date +%Y%m%d-%H%M%S); TMP="$DIR/.duma_db-$TS.sql"
+
+                  # --no-owner/--no-privileges mantem o dump portavel entre ambientes,
+                  # igual ao que sync_local_db_from_prod.sh ja faz.
+                  pg_dump --no-owner --no-privileges > "$TMP"
+
+                  # Mesma guarda do sync_local_db_from_prod.sh: sem o marcador final o dump
+                  # esta truncado, e um truncado que passa como bom e pior que nenhum.
+                  grep -q 'PostgreSQL database dump complete' "$TMP"
+
+                  gzip -9 "$TMP"
+                  mv "$TMP.gz" "$DIR/duma_db-$TS.sql.gz"   # rename atomico: so aqui vira backup
+                  ln -sfn "duma_db-$TS.sql.gz" "$DIR/latest.sql.gz"
+
+                  find "$DIR" -maxdepth 1 -name 'duma_db-*.sql.gz' -mtime +"$RETENTION_DAYS" -delete
+
+                  echo "==> Backup concluido:"
+                  ls -lh "$DIR"
+              volumeMounts:
+                - name: backups
+                  mountPath: /backups
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 128Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+          volumes:
+            - name: backups
+              persistentVolumeClaim:
+                claimName: duma-backups
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: duma-backup-mongo
+  namespace: duma
+  labels:
+    app: duma-backup
+    component: mongo
+spec:
+  # Defasado 15min do Postgres para os dois nao competirem por I/O no mesmo disco.
+  schedule: "15 3 * * *"
+  timeZone: America/Sao_Paulo
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 3600
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      ttlSecondsAfterFinished: 172800
+      template:
+        metadata:
+          labels:
+            app: duma-backup
+            component: mongo
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: mongodump
+              image: mongo:7
+              env:
+                - name: RETENTION_DAYS
+                  value: "14"
+                - name: MONGO_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: duma-infra-secrets
+                      key: MONGO_PASSWORD
+              command: ["/bin/bash", "-c"]
+              args:
+                - |
+                  set -euo pipefail
+                  DIR=/backups/mongo; mkdir -p "$DIR"
+
+                  find "$DIR" -maxdepth 1 -name '.duma_db-*' -mtime +1 -delete
+
+                  TS=$(date +%Y%m%d-%H%M%S); TMP="$DIR/.duma_db-$TS.archive.gz"
+
+                  # Archive unico e comprimido: um arquivo por dia, simples de copiar e restaurar.
+                  mongodump --host duma-mongodb:27017 \
+                    -u duma -p "$MONGO_PASSWORD" --authenticationDatabase admin \
+                    --db duma_db --gzip --archive="$TMP"
+
+                  # mongodump sai != 0 em falha, mas um archive vazio tambem nao serve.
+                  [ -s "$TMP" ]
+
+                  mv "$TMP" "$DIR/duma_db-$TS.archive.gz"
+                  ln -sfn "duma_db-$TS.archive.gz" "$DIR/latest.archive.gz"
+
+                  find "$DIR" -maxdepth 1 -name 'duma_db-*.archive.gz' -mtime +"$RETENTION_DAYS" -delete
+
+                  echo "==> Backup concluido:"
+                  ls -lh "$DIR"
+              volumeMounts:
+                - name: backups
+                  mountPath: /backups
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 128Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+          volumes:
+            - name: backups
+              persistentVolumeClaim:
+                claimName: duma-backups
